@@ -27,6 +27,7 @@
       #annotation-toolbar button {
         background: rgba(255,255,255,0.12); border: none; color: #fff;
         padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 13px;
+        white-space: nowrap;
       }
       #annotation-toolbar button:hover { background: rgba(255,255,255,0.22); }
       #annotation-toolbar button.active { background: #2563EB; }
@@ -34,13 +35,28 @@
         width: 28px; height: 28px; border: none; padding: 0;
         border-radius: 4px; cursor: pointer; background: none;
       }
-      #annotation-toolbar input[type=range] { width: 60px; accent-color: #2563EB; }
+      #annotation-toolbar input[type=range] { width: 120px; accent-color: #2563EB; }
+      #annotation-toolbar .size-label {
+        font-size: 11px; color: rgba(255,255,255,0.6); min-width: 20px; text-align: center;
+      }
       #annotation-toolbar .sep { width: 1px; height: 20px; background: rgba(255,255,255,0.2); }
       #annotation-canvas {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         z-index: 9999; cursor: crosshair;
       }
       #annotation-canvas.hidden { display: none; }
+      /* PDF dropdown */
+      #ann-pdf-menu {
+        position: absolute; top: 100%; right: 0; margin-top: 4px;
+        background: rgba(30,41,59,0.96); border-radius: 6px;
+        padding: 4px 0; min-width: 160px; display: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      }
+      #ann-pdf-menu.show { display: block; }
+      #ann-pdf-menu button {
+        display: block; width: 100%; text-align: left;
+        padding: 8px 14px; border-radius: 0; font-size: 13px;
+      }
       @media print {
         #annotation-toolbar, #annotation-canvas { display: none !important; }
       }
@@ -48,9 +64,18 @@
     <button id="ann-toggle" title="書き込みモード切替">✏️ 書き込み</button>
     <div class="sep"></div>
     <input type="color" id="ann-color" value="#EF4444" title="色">
-    <input type="range" id="ann-size" min="1" max="12" value="3" title="太さ">
+    <input type="range" id="ann-size" min="1" max="20" value="3" step="0.5" title="太さ">
+    <span class="size-label" id="ann-size-label">3</span>
     <button id="ann-eraser" title="消しゴム">🧹</button>
     <button id="ann-clear" title="このスライドをクリア">🗑</button>
+    <div class="sep"></div>
+    <div style="position:relative">
+      <button id="ann-pdf" title="PDF出力">📄 PDF</button>
+      <div id="ann-pdf-menu">
+        <button id="ann-pdf-current">このスライドだけ</button>
+        <button id="ann-pdf-all">全スライド</button>
+      </div>
+    </div>
   `;
   document.body.appendChild(toolbar);
 
@@ -143,8 +168,11 @@
     erasing = false;
     document.getElementById('ann-eraser').classList.remove('active');
   });
-  document.getElementById('ann-size').addEventListener('input', (e) => {
-    penSize = parseInt(e.target.value);
+  const sizeSlider = document.getElementById('ann-size');
+  const sizeLabel = document.getElementById('ann-size-label');
+  sizeSlider.addEventListener('input', (e) => {
+    penSize = parseFloat(e.target.value);
+    sizeLabel.textContent = penSize % 1 === 0 ? penSize : penSize.toFixed(1);
   });
 
   // --- Eraser ---
@@ -160,6 +188,56 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     delete annotations[currentIndex()];
   });
+
+  // --- PDF ---
+  const btnPdf = document.getElementById('ann-pdf');
+  const pdfMenu = document.getElementById('ann-pdf-menu');
+
+  btnPdf.addEventListener('click', (e) => {
+    e.stopPropagation();
+    pdfMenu.classList.toggle('show');
+  });
+  document.addEventListener('click', () => pdfMenu.classList.remove('show'));
+  pdfMenu.addEventListener('click', (e) => e.stopPropagation());
+
+  document.getElementById('ann-pdf-current').addEventListener('click', () => {
+    pdfMenu.classList.remove('show');
+    printSlides('current');
+  });
+  document.getElementById('ann-pdf-all').addEventListener('click', () => {
+    pdfMenu.classList.remove('show');
+    printSlides('all');
+  });
+
+  function printSlides(mode) {
+    // Temporarily disable annotation canvas
+    if (enabled) {
+      btnToggle.click(); // turn off drawing mode
+    }
+
+    if (mode === 'current') {
+      // Hide all slides except current, then print
+      const slides = document.querySelectorAll('.slide');
+      const idx = currentIndex();
+      const styleEl = document.createElement('style');
+      styleEl.id = 'ann-print-current';
+      styleEl.textContent = `
+        @media print {
+          .slide { display: none !important; }
+          .slide:nth-child(${idx + 1}) { display: flex !important; }
+        }
+      `;
+      document.head.appendChild(styleEl);
+      window.print();
+      // Cleanup after print dialog
+      setTimeout(() => {
+        const s = document.getElementById('ann-print-current');
+        if (s) s.remove();
+      }, 1000);
+    } else {
+      window.print();
+    }
+  }
 
   // --- Drawing ---
   function getPos(e) {
