@@ -1,0 +1,97 @@
+name: Update index.html
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '*.html'
+      - '!index.html'
+
+jobs:
+  update-index:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate index.html
+        run: |
+          cat > index.html << 'HEADER'
+          <!DOCTYPE html>
+          <html lang="ja">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Slides for Check</title>
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+            <style>
+              *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+              body {
+                font-family: 'Noto Sans JP', 'Inter', sans-serif;
+                background: #F8FAFC;
+                color: #1E293B;
+                min-height: 100vh;
+                padding: 3rem 1.5rem;
+              }
+              .container { max-width: 720px; margin: 0 auto; }
+              h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+              .subtitle { font-size: 0.875rem; color: #64748B; margin-bottom: 2rem; }
+              .slide-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+              .slide-list a {
+                display: block; padding: 1.25rem 1.5rem; background: #fff;
+                border: 1px solid #E2E8F0; border-radius: 8px;
+                text-decoration: none; color: inherit;
+                transition: border-color 0.15s, box-shadow 0.15s;
+              }
+              .slide-list a:hover { border-color: #2563EB; box-shadow: 0 1px 4px rgba(37,99,235,0.1); }
+              .slide-title { font-weight: 600; font-size: 1rem; }
+              .slide-meta { font-size: 0.8rem; color: #64748B; margin-top: 0.25rem; }
+              .empty { color: #94A3B8; text-align: center; padding: 3rem 0; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>Slides for Check</h1>
+              <p class="subtitle">レビュー用プレゼンテーション一覧</p>
+              <ul class="slide-list">
+          HEADER
+
+          found=0
+          for f in *.html; do
+            [ "$f" = "index.html" ] && continue
+            found=1
+            title=$(grep -oP '(?<=<title>).*(?=</title>)' "$f" | head -1)
+            subtitle=$(grep -oP '(?<=class="subtitle">).*(?=</p>)' "$f" | head -1)
+            meta=$(grep -oP '(?<=class="meta">).*(?=</p>)' "$f" | head -1)
+            [ -z "$title" ] && title="$f"
+            desc=""
+            [ -n "$subtitle" ] && desc="$subtitle"
+            [ -n "$meta" ] && desc="${desc:+$desc | }$meta"
+            echo "        <li><a href=\"$f\">" >> index.html
+            echo "          <div class=\"slide-title\">$title</div>" >> index.html
+            if [ -n "$desc" ]; then
+              echo "          <div class=\"slide-meta\">$desc</div>" >> index.html
+            fi
+            echo "        </a></li>" >> index.html
+          done
+
+          if [ "$found" -eq 0 ]; then
+            echo '        <li class="empty">プレゼンテーションはまだありません</li>' >> index.html
+          fi
+
+          cat >> index.html << 'FOOTER'
+              </ul>
+            </div>
+          </body>
+          </html>
+          FOOTER
+
+      - name: Commit if changed
+        run: |
+          git diff --quiet index.html && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Auto-update index.html"
+          git push
