@@ -4,40 +4,58 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## プロジェクト概要
 
-マーケティングOps AI導入戦略のプレゼンテーション資料（レビュー用）。単一HTMLファイル（`strategy.html`）で構成されるスライドデッキ。
+HTMLプレゼンテーションをGitHub Pagesで公開・管理するためのリポジトリ。
+レビュー用にスライドを一時公開し、不要になったら削除する運用。
 
-## アーキテクチャ
+- **GitHub リポジトリ**: https://github.com/chirakuin/A02_Slides_for_chack.git
+- **GitHub Pages URL**: https://chirakuin.github.io/A02_Slides_for_chack/
+- **Pages設定**: `main` ブランチ / ルート(`/`) / legacy デプロイ
 
-- **単一ファイル構成**: `strategy.html` がプレゼンテーション全体（約1,450行、35枚超のスライド）
-- **共有フレームワーク依存**: CSS/JSは `../../../framework/presentation.css` と `../../../framework/presentation.js` を参照（580_Slidesプロジェクト群と共通の基盤）
-- **外部ライブラリ**: Chart.js v4（棒・折れ線グラフ）、D3.js v7、Mermaid.js v10（ダイアグラム）をCDNから読み込み
-- **フォント**: Google Fonts（Inter + Noto Sans JP）
+## HTMLを公開する手順
 
-## スライド構造の規約
+1. **フレームワークを同梱する**: 元HTMLが `../../../framework/` を参照している場合、`framework/` にコピーしてパスを書き換える
+   - フレームワーク元: `~/Documents/Code/000_business/500_BrainStorming/007_プレゼン生成パイプライン_codex/framework/`
+   - `presentation.css` と `presentation.js` の2ファイル
+2. **`index.html` として配置する**: GitHub Pages のエントリポイントは `index.html`
+3. **コミット & プッシュ**: `git add` → `git commit` → `git push origin main`
+4. **反映確認**: 1〜2分後に https://chirakuin.github.io/A02_Slides_for_chack/ で確認
+
+### 複数HTMLを公開する場合
+
+`index.html` はトップページ用。追加のHTMLは別名で配置し、`https://chirakuin.github.io/A02_Slides_for_chack/{ファイル名}.html` でアクセスできる。
+
+## HTMLを削除（非公開化）する手順
+
+1. 対象のHTMLファイルを `git rm` で削除
+2. 不要になったフレームワークファイルも `git rm framework/` で削除
+3. コミット & プッシュ
+4. 全ファイル削除後もPagesは有効のまま残る（404になるだけ）
+
+### Pages自体を無効化する場合
+
+```bash
+gh api repos/chirakuin/A02_Slides_for_chack/pages -X DELETE
+```
+
+### Pages を再度有効化する場合
+
+```bash
+gh api repos/chirakuin/A02_Slides_for_chack/pages -X POST -f "build_type=legacy" -f "source[branch]=main" -f "source[path]=/"
+```
+
+## スライドHTML の構造規約
 
 - 各スライドは `<div class="slide ...">` で定義
 - スライドタイプ: `title-slide`、`divider-slide`、`content-slide`
 - レイアウトクラス: `layout-stat-hero-grid`、`diagram-flow-h`、`diagram-swimlane`、`diagram-bullets-v`、`data-table` 等
-- 共通要素: `.slide-header` > `h3`、`.slide-description`、`.slide-body`、`.slide-source`（出典）
-- セクション間の遷移テキスト: `.transition-text`
+- 共通要素: `.slide-header` > `h3`、`.slide-description`、`.slide-body`、`.slide-source`
+- 外部ライブラリ(CDN): Chart.js v4、D3.js v7、Mermaid.js v10
+- フォント: Google Fonts（Inter + Noto Sans JP）
+- コンテンツは日本語（`lang="ja"`）
 
-## カスタムCSS
+## PDF化
 
-プレゼンテーション固有のスタイルは `<style>` タグ内に最小限（`.gate-task` スタイルのみ）。レイアウト・デザインの大部分はフレームワークCSSが担当。
-
-## Chart.js の使い方
-
-- `<canvas id="chartNN">` をスライド内に配置し、末尾の `<script>` ブロックで初期化
-- グローバルデフォルト: Noto Sans JP、13px、色 #64748B
-- チャートID命名: `chart14`、`chart17`、`chart33` 等（スライド番号に対応しない連番）
-
-## 開発・確認方法
-
-ローカルファイルとしてブラウザで直接開く。フレームワークファイルへの相対パスが正しく解決される環境が必要（`/Users/cc/Documents/Code/000_business/` 配下の配置を前提）。
-
-## 言語
-
-コンテンツは全て日本語。HTMLの `lang="ja"`。
+ブラウザで GitHub Pages URL を開き `Cmd+P` →「PDFとして保存」。Chrome の印刷設定で「背景のグラフィック」を有効にすること。
 
 ## Claude Code メモリ
 
