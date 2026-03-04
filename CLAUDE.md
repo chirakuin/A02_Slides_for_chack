@@ -80,12 +80,13 @@ gh api repos/chirakuin/A02_Slides_for_chack/pages -X POST -f "build_type=legacy"
 - 🗑 クリア — 現在スライドの描画をクリア
 - 📄 PDF — ドロップダウンで「このスライドだけ」or「全スライド」を選択してブラウザ印刷
 
-書き込みはスライドごとに保持される。印刷時（@media print）はツールバー・canvasとも自動非表示。
+書き込みはスライドごとに保持される。印刷時はツールバー・canvasは非表示だが、書き込み内容はPDFに含まれる（下記参照）。
 
 ## PDF化
 
 - **ツールバーのPDFボタン**: 📄 PDF → 「このスライドだけ」or「全スライド」を選択。ブラウザの印刷ダイアログが開く。「PDFとして保存」を選択。Chrome で「背景のグラフィック」を有効にすること
-- **Playwright**: `page.pdf({ format: 'A4', landscape: true, printBackground: true })` で全スライドをPDF出力可能
+- **書き込みのPDF出力**: PDFボタン押下時、各スライドの書き込みを `<img>` として焼き込んでから印刷する。印刷後に自動クリーンアップ。ツールバーやcanvas自体はPDFに出ない
+- **Playwright**: `page.pdf({ format: 'A4', landscape: true, printBackground: true })` で全スライドをPDF出力可能（※Playwrightの場合は書き込みは含まれない）
 
 ## GitHub Actions
 
