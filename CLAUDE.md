@@ -64,15 +64,48 @@ gh api repos/chirakuin/A02_Slides_for_chack/pages -X POST -f "build_type=legacy"
 - フォント: Google Fonts（Inter + Noto Sans JP）
 - コンテンツは日本語（`lang="ja"`）
 
-## 書き込み機能
+## 書き込み機能（annotation.js）
 
-`framework/annotation.js` がスライド上にペン描画レイヤーを提供する。右上ツールバーでON/OFF。
-印刷時（@media print）は自動非表示。
+`framework/annotation.js` が全プレゼンテーションに共通で適用される。
+
+ツールバー（右上固定）:
+- ✏️ 書き込み — 描画モード ON/OFF
+- カラーピッカー — ペン色変更
+- スライダー（幅120px）— 太さ 1〜20、刻み0.5。横に現在値表示
+- 🧹 消しゴム — 消しゴムモード切替
+- 🗑 クリア — 現在スライドの描画をクリア
+- 📄 PDF — ドロップダウンで「このスライドだけ」or「全スライド」を選択してブラウザ印刷
+
+書き込みはスライドごとに保持される。印刷時（@media print）はツールバー・canvasとも自動非表示。
 
 ## PDF化
 
-- **ブラウザ**: GitHub Pages URL を開き `Cmd+P` →「PDFとして保存」。Chrome で「背景のグラフィック」を有効にすること
+- **ツールバーのPDFボタン**: 📄 PDF → 「このスライドだけ」or「全スライド」を選択。ブラウザの印刷ダイアログが開く。「PDFとして保存」を選択。Chrome で「背景のグラフィック」を有効にすること
 - **Playwright**: `page.pdf({ format: 'A4', landscape: true, printBackground: true })` で全スライドをPDF出力可能
+
+## GitHub Actions
+
+- `.github/workflows/update-index.yml` — `*.html`（index.html以外）の追加・削除時に `index.html`（目次）を自動再生成
+- 各HTMLの `<title>`, `.subtitle`, `.meta` を抽出して一覧に表示
+
+## .nojekyll
+
+Jekyllビルドをバイパスするために必要。削除しないこと。
+
+## ファイル構成
+
+```
+index.html                  — 目次ページ（Actions自動生成・手動編集不要）
+strategy.html               — プレゼンテーション（例）
+framework/
+  presentation.css          — スライドフレームワークCSS
+  presentation.js           — スライドナビゲーションJS
+  annotation.js             — 書き込み＋PDF機能
+publish.sh                  — HTML公開スクリプト
+.github/workflows/
+  update-index.yml          — 目次自動更新ワークフロー
+.nojekyll                   — Jekyll無効化
+```
 
 ## Claude Code メモリ
 
