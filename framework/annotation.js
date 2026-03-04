@@ -59,6 +59,7 @@
       }
       @media print {
         #annotation-toolbar, #annotation-canvas { display: none !important; }
+        .ann-print-overlay { display: block !important; position: absolute !important; }
       }
     </style>
     <button id="ann-toggle" title="書き込みモード切替">✏️ 書き込み</button>
@@ -209,15 +210,42 @@
     printSlides('all');
   });
 
+  function bakeAnnotations() {
+    // Save current slide before baking
+    if (enabled) saveCurrentSlide();
+
+    const slides = document.querySelectorAll('.slide');
+    const overlays = [];
+    slides.forEach((slide, i) => {
+      const data = annotations[i];
+      if (!data) return;
+      const img = document.createElement('img');
+      img.src = data;
+      img.className = 'ann-print-overlay';
+      img.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;';
+      slide.style.position = 'relative';
+      slide.appendChild(img);
+      overlays.push(img);
+    });
+    return overlays;
+  }
+
+  function cleanupOverlays(overlays) {
+    overlays.forEach(img => img.remove());
+    const s = document.getElementById('ann-print-current');
+    if (s) s.remove();
+  }
+
   function printSlides(mode) {
-    // Temporarily disable annotation canvas
+    // Turn off drawing mode
     if (enabled) {
-      btnToggle.click(); // turn off drawing mode
+      btnToggle.click();
     }
 
+    // Bake annotations into slides as images for print
+    const overlays = bakeAnnotations();
+
     if (mode === 'current') {
-      // Hide all slides except current, then print
-      const slides = document.querySelectorAll('.slide');
       const idx = currentIndex();
       const styleEl = document.createElement('style');
       styleEl.id = 'ann-print-current';
@@ -228,15 +256,12 @@
         }
       `;
       document.head.appendChild(styleEl);
-      window.print();
-      // Cleanup after print dialog
-      setTimeout(() => {
-        const s = document.getElementById('ann-print-current');
-        if (s) s.remove();
-      }, 1000);
-    } else {
-      window.print();
     }
+
+    window.print();
+
+    // Cleanup after print dialog
+    setTimeout(() => cleanupOverlays(overlays), 1000);
   }
 
   // --- Drawing ---
