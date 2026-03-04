@@ -41,6 +41,9 @@
         z-index: 9999; cursor: crosshair;
       }
       #annotation-canvas.hidden { display: none; }
+      @media print {
+        #annotation-toolbar, #annotation-canvas { display: none !important; }
+      }
     </style>
     <button id="ann-toggle" title="書き込みモード切替">✏️ 書き込み</button>
     <div class="sep"></div>
