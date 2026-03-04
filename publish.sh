@@ -39,12 +39,13 @@ cp "$SRC" "$REPO_DIR/$FILENAME"
 sed -i '' 's|"\.\./\.\./\.\./framework/|"framework/|g' "$REPO_DIR/$FILENAME"
 sed -i '' "s|'\.\./\.\./\.\./framework/|'framework/|g" "$REPO_DIR/$FILENAME"
 
-# annotation.js が未挿入なら追加（presentation.js の直後に挿入）
+# annotation.js が未挿入なら追加（presentation.js の直後にキャッシュバスター付きで挿入）
+CACHE_V="v=$(date +%s)"
 if ! grep -q 'annotation.js' "$REPO_DIR/$FILENAME"; then
-  sed -i '' '/<script src="framework\/presentation\.js"><\/script>/a\
-\
-  <!-- Annotation Layer -->\
-  <script src="framework/annotation.js"></script>' "$REPO_DIR/$FILENAME"
+  sed -i '' "/<script src=\"framework\/presentation\.js\"><\/script>/a\\
+\\
+  <!-- Annotation Layer -->\\
+  <script src=\"framework/annotation.js?${CACHE_V}\"></script>" "$REPO_DIR/$FILENAME"
 fi
 
 # Git add, commit, push
