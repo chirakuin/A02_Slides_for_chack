@@ -134,7 +134,7 @@
 </div>
 
 <div class="slide content-slide">
-  <div class="slide-header"><h3>ジャーニー全体にAI適用余地があり、まずLINE配信から着手する</h3></div>
+  <div class="slide-header"><h3>ジャーニー全体にAI適用余地があるが、まずLINE配信から着手する</h3></div>
   <p class="slide-description">顧客ジャーニーの各段階にAI自動化の機会がある。ROI・実現可能性が最も高いLINE配信（関係・深化）を最優先で着手し、構築したAI基盤を次期以降で横展開する。</p>
   <div class="slide-body">
     <table class="data-table" style="font-size: 0.78rem;">
@@ -175,7 +175,7 @@
         <td style="text-align:left;"><strong>本設計で対応。</strong>8工程基盤+トリガー配信</td>
       </tr>
     </table>
-    <div class="accent-box"><strong>なぜLINE配信（関係・深化）から着手するか:</strong> ①工数削減効果が最も大きい（週20h→承認2回） ②CDPデータとの接続が最も整っている ③構築するAI基盤（LLM・RAG・MCP）が他ジャーニーの土台になる</div>
+    <div class="accent-box"><strong>LINE配信（関係・深化）から着手する理由:</strong> ①工数削減効果が最も大きい（週20h→承認2回） ②CDPデータとの接続が最も整っている ③構築するAI基盤（LLM・RAG・MCP）が他ジャーニーの土台になる</div>
   </div>
 </div>
 
@@ -361,40 +361,23 @@
 <div class="slide content-slide">
   <div class="slide-header"><h3>全8工程は2つの承認ゲートで区切られる</h3></div>
   <div class="slide-body">
-    <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <div style="background: #D1FAE5; color: #065F46; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; white-space: nowrap; min-width: 80px;">AI自律処理</div>
-        <div style="display: flex; align-items: center; gap: 6px; flex: 1;">
-          <div style="flex: 1; background: #EFF6FF; border: 1px solid #93C5FD; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 1</strong><br>データ分析</div>
-          <div style="color: #2563EB;">→</div>
-          <div style="flex: 1; background: #EFF6FF; border: 1px solid #93C5FD; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 2</strong><br>セグメント選定</div>
-          <div style="color: #2563EB;">→</div>
-          <div style="flex: 1; background: #EFF6FF; border: 1px solid #93C5FD; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 3</strong><br>メッセージ企画</div>
-        </div>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <div style="background: #FEF3C7; color: #92400E; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; white-space: nowrap; min-width: 80px;">承認ゲート</div>
-        <div style="display: flex; align-items: center; gap: 6px; flex: 1;">
-          <div style="flex: 1; background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;">🚪 <strong>承認①</strong><br>配信プラン</div>
-          <div style="color: #F59E0B;">→</div>
-          <div style="flex: 1; background: #EFF6FF; border: 1px solid #93C5FD; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 4</strong><br>クリエイティブ制作</div>
-          <div style="color: #F59E0B;">→</div>
-          <div style="flex: 1; background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;">🚪 <strong>承認②</strong><br>クリエイティブ</div>
-        </div>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <div style="background: #D1FAE5; color: #065F46; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; white-space: nowrap; min-width: 80px;">AI完全自動</div>
-        <div style="display: flex; align-items: center; gap: 6px; flex: 1;">
-          <div style="flex: 1; background: #D1FAE5; border: 1px solid #6EE7B7; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 5</strong><br>配信設定</div>
-          <div style="color: #10B981;">→</div>
-          <div style="flex: 1; background: #D1FAE5; border: 1px solid #6EE7B7; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 6</strong><br>配信実行</div>
-          <div style="color: #10B981;">→</div>
-          <div style="flex: 1; background: #D1FAE5; border: 1px solid #6EE7B7; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 7</strong><br>効果測定</div>
-          <div style="color: #10B981;">→</div>
-          <div style="flex: 1; background: #D1FAE5; border: 1px solid #6EE7B7; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 8</strong><br>改善提案</div>
-        </div>
-      </div>
-      <div style="text-align: center; font-size: 0.75rem; color: #64748B; margin-top: -4px;">⟳ Step 8 の改善提案 → 次サイクルの Step 1 に自動投入</div>
+    <div class="mermaid-pending" style="width: 100%;">
+flowchart LR
+  S1["1. データ分析"]:::ai --> S2["2. セグメント選定"]:::ai --> S3["3. メッセージ企画"]:::ai
+  S3 --> G1{{"🚪 承認①<br/>配信プラン"}}:::gate
+  G1 --> S4["4. クリエイティブ制作"]:::ai
+  S4 --> G2{{"🚪 承認②<br/>クリエイティブ"}}:::gate
+  G2 --> S5["5. 配信設定"]:::auto --> S6["6. 配信実行"]:::auto --> S7["7. 効果測定"]:::auto --> S8["8. 改善提案"]:::auto
+  S8 -.->|次サイクル| S1
+
+  classDef ai fill:#DBEAFE,stroke:#2563EB,color:#1E293B
+  classDef gate fill:#FEF3C7,stroke:#F59E0B,color:#92400E,stroke-width:2px
+  classDef auto fill:#D1FAE5,stroke:#10B981,color:#065F46
+    </div>
+    <div style="display: flex; gap: 16px; justify-content: center; margin-top: 8px; font-size: 0.75rem;">
+      <span><span style="display:inline-block;width:12px;height:12px;background:#DBEAFE;border:1px solid #2563EB;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>AI自律処理</span>
+      <span><span style="display:inline-block;width:12px;height:12px;background:#FEF3C7;border:1px solid #F59E0B;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>人間の承認</span>
+      <span><span style="display:inline-block;width:12px;height:12px;background:#D1FAE5;border:1px solid #10B981;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>AI完全自動</span>
     </div>
     <div class="accent-box">人間の介在は2回の承認操作のみ。それ以外はAIが自律的に処理する。</div>
   </div>
@@ -606,6 +589,7 @@
 
 <div class="slide content-slide">
   <div class="slide-header"><h3>5つの業界制約とシステムの対応策</h3></div>
+  <p class="slide-description">制約事項についてもLLM（OSSモデル含む）で対応する。</p>
   <div class="slide-body">
     <table class="data-table" style="font-size: 0.82rem;">
       <tr><th>#</th><th>制約</th><th>自動化への影響</th><th>AI/システムの対応策</th></tr>
@@ -689,7 +673,7 @@
         <div style="font-size: 0.82rem; color: #64748B; margin-top: 8px;">修正指示は自然言語で入力 → AIが該当Stepを再実行して再提出</div>
       </div>
       <div class="split-panel-right">
-        <img src="../input/screen_a_plan_approval.png" alt="画面A: 配信プラン承認">
+        <img src="images/screen_a_plan_approval.png" alt="画面A: 配信プラン承認">
       </div>
     </div>
   </div>
@@ -750,7 +734,7 @@
         </table>
       </div>
       <div class="split-panel-right">
-        <img src="../input/screen_b_creative_approval.png" alt="画面B: クリエイティブ承認">
+        <img src="images/screen_b_creative_approval.png" alt="画面B: クリエイティブ承認">
       </div>
     </div>
   </div>
@@ -792,7 +776,7 @@
         </table>
       </div>
       <div class="split-panel-right">
-        <img src="../input/screen_c_monitoring.png" alt="画面C: モニタリング">
+        <img src="images/screen_c_monitoring.png" alt="画面C: モニタリング">
       </div>
     </div>
   </div>
@@ -818,7 +802,7 @@
         <div style="font-size: 0.82rem; color: #475569;">サンキー: 配信→開封→クリック→サイト→購買</div>
       </div>
       <div class="split-panel-right">
-        <img src="../input/db08_line_crm.png" alt="DB8: LINE CRM">
+        <img src="images/db08_line_crm.png" alt="DB8: LINE CRM">
       </div>
     </div>
   </div>
@@ -840,7 +824,7 @@
         <div style="font-size: 0.82rem; color: #475569;">Recency × Frequency バブルチャート</div>
       </div>
       <div class="split-panel-right">
-        <img src="../input/db09_retention.png" alt="DB9: リテンション">
+        <img src="images/db09_retention.png" alt="DB9: リテンション">
       </div>
     </div>
   </div>
@@ -860,7 +844,7 @@
         <div style="font-size: 0.82rem; color: #475569;">EC購入 11% / レシートUL 70% / 自販機 5% / ID-POS 15% — <strong>Web投資のROI正当化</strong></div>
       </div>
       <div class="split-panel-right">
-        <img src="../input/db10_product_digital.png" alt="DB10: 商品デジタル">
+        <img src="images/db10_product_digital.png" alt="DB10: 商品デジタル">
       </div>
     </div>
   </div>
@@ -880,7 +864,7 @@
         <div style="font-size: 0.82rem; color: #475569;">行: セグメント、列: 広告CTR/LINE開封率/CP参加率/EC CVR。各セグメントへの最適チャネル特定に使用</div>
       </div>
       <div class="split-panel-right">
-        <img src="../input/db11_segment.png" alt="DB11: セグメント">
+        <img src="images/db11_segment.png" alt="DB11: セグメント">
       </div>
     </div>
   </div>
@@ -959,6 +943,20 @@
 
   <!-- Custom JS (Chart.js initialization for this presentation) -->
   <script>
+// Mermaid lazy render: render when slide becomes visible
+const _origShowSlide = window.showSlide;
+window.showSlide = function(idx) {
+  _origShowSlide(idx);
+  const slide = document.querySelectorAll('.slide')[idx];
+  if (!slide) return;
+  const pending = slide.querySelectorAll('.mermaid-pending');
+  pending.forEach(el => {
+    el.classList.remove('mermaid-pending');
+    el.classList.add('mermaid');
+    mermaid.run({ nodes: [el] });
+  });
+};
+
 // TOC back buttons
 document.querySelectorAll('.slide').forEach((s, i) => {
   const btn = document.createElement('a');
