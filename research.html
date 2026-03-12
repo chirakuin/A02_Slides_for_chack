@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM配信オペレーション自動化設計</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+
+  <!-- D3.js -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+  <!-- Mermaid.js -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <!-- Framework CSS -->
+  <link rel="stylesheet" href="framework/presentation.css">
+
+  <!-- Custom CSS (presentation-specific overrides, typically 0-15 lines) -->
+  <style>
+    .slide-body img { max-width: 100%; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+    .split-panel-right img { max-width: 100%; height: auto; max-height: 420px; }
+    .slide-counter { left: 50% !important; right: auto !important; transform: translateX(-50%) !important; text-align: center !important; color: #64748B !important; }
+    .toc-btn { position: absolute; top: 12px; right: 16px; font-size: 0.65rem; color: #93C5FD; cursor: pointer; z-index: 10; padding: 4px 10px; border-radius: 4px; opacity: 0.4; transition: opacity 0.2s, background 0.2s; text-decoration: none; }
+    .toc-btn:hover { opacity: 1; background: #EFF6FF; color: #2563EB; }
+    .divider-slide .toc-btn { color: rgba(255,255,255,0.3); }
+    .divider-slide .toc-btn:hover { color: #FFFFFF; background: rgba(255,255,255,0.15); }
+    .title-slide .toc-btn, #toc-slide .toc-btn { display: none; }
+    .slide-header + .slide-description { margin-top: 1.2em; }
+    .slide-description + .slide-body { margin-top: 1.2em; }
+    .slide-header + .slide-body { margin-top: 1.5em; }
+  </style>
+</head>
+
+<body>
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Presentation Container -->
+  <div class="presentation" id="presentation">
+<div class="slide title-slide active">
+  <h1>CRM配信オペレーション自動化設計</h1>
+  <p class="subtitle">AI配信基盤の設計と<br>ユーザージャーニー別ダッシュボード</p>
+  <p class="meta">2026</p>
+</div>
+
+<div class="slide content-slide" id="toc-slide">
+  <div class="slide-header"><h3>目次</h3></div>
+  <div class="slide-body">
+    <div style="display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 800px;">
+      <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 16px; border-radius: 8px; background: #EFF6FF; border-left: 4px solid #2563EB; transition: background 0.2s;" onclick="showSlide(2)" onmouseover="this.style.background='#DBEAFE'" onmouseout="this.style.background='#EFF6FF'">
+        <span style="font-family: 'Inter', sans-serif; font-weight: 700; color: #2563EB; font-size: 0.85rem; min-width: 30px;">P.3</span>
+        <span style="font-weight: 600; color: #1E3A5F; font-size: 0.95rem;">将来像</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 16px; border-radius: 8px; background: #EFF6FF; border-left: 4px solid #2563EB; transition: background 0.2s;" onclick="showSlide(3)" onmouseover="this.style.background='#DBEAFE'" onmouseout="this.style.background='#EFF6FF'">
+        <span style="font-family: 'Inter', sans-serif; font-weight: 700; color: #2563EB; font-size: 0.85rem; min-width: 30px;">P.4</span>
+        <span style="font-weight: 600; color: #1E3A5F; font-size: 0.95rem;">ジャーニー×AI×ダッシュボード</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 16px; border-radius: 8px; background: #EFF6FF; border-left: 4px solid #2563EB; transition: background 0.2s;" onclick="showSlide(4)" onmouseover="this.style.background='#DBEAFE'" onmouseout="this.style.background='#EFF6FF'">
+        <span style="font-family: 'Inter', sans-serif; font-weight: 700; color: #2563EB; font-size: 0.85rem; min-width: 30px;">P.5</span>
+        <span style="font-weight: 600; color: #1E3A5F; font-size: 0.95rem;">AIオーケストレーター</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 16px; border-radius: 8px; background: #EFF6FF; border-left: 4px solid #2563EB; transition: background 0.2s;" onclick="showSlide(7)" onmouseover="this.style.background='#DBEAFE'" onmouseout="this.style.background='#EFF6FF'">
+        <span style="font-family: 'Inter', sans-serif; font-weight: 700; color: #2563EB; font-size: 0.85rem; min-width: 30px;">P.8</span>
+        <span style="font-weight: 600; color: #1E3A5F; font-size: 0.95rem;">データフロー</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 16px; border-radius: 8px; background: #EFF6FF; border-left: 4px solid #2563EB; transition: background 0.2s;" onclick="showSlide(10)" onmouseover="this.style.background='#DBEAFE'" onmouseout="this.style.background='#EFF6FF'">
+        <span style="font-family: 'Inter', sans-serif; font-weight: 700; color: #2563EB; font-size: 0.85rem; min-width: 30px;">P.11</span>
+        <span style="font-weight: 600; color: #1E3A5F; font-size: 0.95rem;">AI自動処理フロー</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 16px; border-radius: 8px; background: #EFF6FF; border-left: 4px solid #2563EB; transition: background 0.2s;" onclick="showSlide(15)" onmouseover="this.style.background='#DBEAFE'" onmouseout="this.style.background='#EFF6FF'">
+        <span style="font-family: 'Inter', sans-serif; font-weight: 700; color: #2563EB; font-size: 0.85rem; min-width: 30px;">P.16</span>
+        <span style="font-weight: 600; color: #1E3A5F; font-size: 0.95rem;">4つの配信パターン</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 16px; border-radius: 8px; background: #EFF6FF; border-left: 4px solid #2563EB; transition: background 0.2s;" onclick="showSlide(20)" onmouseover="this.style.background='#DBEAFE'" onmouseout="this.style.background='#EFF6FF'">
+        <span style="font-family: 'Inter', sans-serif; font-weight: 700; color: #2563EB; font-size: 0.85rem; min-width: 30px;">P.21</span>
+        <span style="font-weight: 600; color: #1E3A5F; font-size: 0.95rem;">飲料業界特有の制約</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 16px; border-radius: 8px; background: #EFF6FF; border-left: 4px solid #2563EB; transition: background 0.2s;" onclick="showSlide(22)" onmouseover="this.style.background='#DBEAFE'" onmouseout="this.style.background='#EFF6FF'">
+        <span style="font-family: 'Inter', sans-serif; font-weight: 700; color: #2563EB; font-size: 0.85rem; min-width: 30px;">P.23</span>
+        <span style="font-weight: 600; color: #1E3A5F; font-size: 0.95rem;">ダッシュボード連携</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 16px; border-radius: 8px; background: #EFF6FF; border-left: 4px solid #2563EB; transition: background 0.2s;" onclick="showSlide(24)" onmouseover="this.style.background='#DBEAFE'" onmouseout="this.style.background='#EFF6FF'">
+        <span style="font-family: 'Inter', sans-serif; font-weight: 700; color: #2563EB; font-size: 0.85rem; min-width: 30px;">P.25</span>
+        <span style="font-weight: 600; color: #1E3A5F; font-size: 0.95rem;">承認画面</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 16px; border-radius: 8px; background: #EFF6FF; border-left: 4px solid #2563EB; transition: background 0.2s;" onclick="showSlide(31)" onmouseover="this.style.background='#DBEAFE'" onmouseout="this.style.background='#EFF6FF'">
+        <span style="font-family: 'Inter', sans-serif; font-weight: 700; color: #2563EB; font-size: 0.85rem; min-width: 30px;">P.32</span>
+        <span style="font-weight: 600; color: #1E3A5F; font-size: 0.95rem;">ダッシュボード詳細</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 16px; border-radius: 8px; background: #EFF6FF; border-left: 4px solid #2563EB; transition: background 0.2s;" onclick="showSlide(37)" onmouseover="this.style.background='#DBEAFE'" onmouseout="this.style.background='#EFF6FF'">
+        <span style="font-family: 'Inter', sans-serif; font-weight: 700; color: #2563EB; font-size: 0.85rem; min-width: 30px;">P.38</span>
+        <span style="font-weight: 600; color: #1E3A5F; font-size: 0.95rem;">Appendix</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>配信メディアを問わないAI自動化基盤</h3></div>
+  <p class="slide-description">AIオーケストレーターが顧客データを分析し、最適なメディア・タイミング・コンテンツを自動選定して配信する。まずLINE配信を構築し、AI基盤を段階的にメディア横展開する。</p>
+  <div class="slide-body">
+    <div class="layout-split-panel">
+      <div class="split-panel-left">
+        <h4 class="split-panel-heading">段階的ロードマップ</h4>
+        <table class="data-table" style="font-size: 0.82rem;">
+          <tr><th>優先度</th><th>対象</th><th>主な取り組み</th></tr>
+          <tr><td><strong>◎</strong></td><td>LINE配信</td><td style="text-align:left;">AIオーケストレーター構築、RAG/MCP基盤整備、全8工程自動化</td></tr>
+          <tr><td><strong>◯</strong></td><td>メール追加</td><td style="text-align:left;">メールアダプター、LINE知見の横展開、重複排除</td></tr>
+          <tr><td><strong>△</strong></td><td>広告・Push</td><td style="text-align:left;">クロスメディア最適配分、統合キャンペーン、予算自動配分</td></tr>
+        </table>
+      </div>
+      <div class="split-panel-right">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;">
+          <div style="background: #F1F5F9; border: 2px solid #94A3B8; border-radius: 8px; padding: 12px 32px; font-weight: 600; color: #475569;">CDP / DWH</div>
+          <div style="color: #2563EB; font-size: 1.2rem;">↓</div>
+          <div style="background: #EFF6FF; border: 2px solid #2563EB; border-radius: 10px; padding: 14px 24px; font-weight: 700; color: #1E3A5F; text-align: center;">AIオーケストレーター<br><span style="font-size: 0.75rem; font-weight: 400; color: #64748B;">RAG + LLM + MCP</span></div>
+          <div style="color: #2563EB; font-size: 1.2rem;">↓</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+            <div style="background: #10B981; color: white; border-radius: 6px; padding: 8px 14px; font-weight: 600; font-size: 0.82rem;">LINE ★今回</div>
+            <div style="background: #E2E8F0; border-radius: 6px; padding: 8px 14px; font-size: 0.82rem; color: #64748B;">メール 次期</div>
+            <div style="background: #E2E8F0; border-radius: 6px; padding: 8px 14px; font-size: 0.82rem; color: #64748B;">広告 将来</div>
+            <div style="background: #E2E8F0; border-radius: 6px; padding: 8px 14px; font-size: 0.82rem; color: #64748B;">Push 将来</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accent-box">今回構築するAI基盤（RAG・MCP・ワークフロー）は、次期以降で配信メディアアダプターを追加するだけで横展開できる設計とする。</div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>ジャーニー全体にAI適用余地があり、まずLINE配信から着手する</h3></div>
+  <p class="slide-description">顧客ジャーニーの各段階にAI自動化の機会がある。ROI・実現可能性が最も高いLINE配信（関係・深化）を最優先で着手し、構築したAI基盤を次期以降で横展開する。</p>
+  <div class="slide-body">
+    <table class="data-table" style="font-size: 0.78rem;">
+      <tr><th>ジャーニー</th><th>AI適用の余地</th><th>現状の課題</th><th style="text-align:center;">優先度</th><th>対応方針</th></tr>
+      <tr>
+        <td><strong>認知</strong></td>
+        <td style="text-align:left;">広告ターゲティング最適化、予算自動配分</td>
+        <td style="text-align:left;">広告運用は別チーム。統合データ基盤が未整備</td>
+        <td style="text-align:center;"><span style="font-size:1rem;">△</span></td>
+        <td style="text-align:left;">AI基盤＋広告アダプターで横展開</td>
+      </tr>
+      <tr>
+        <td><strong>興味</strong></td>
+        <td style="text-align:left;">サイト内レコメンド、パーソナライズドLP生成</td>
+        <td style="text-align:left;">ECサイト改修が必要。配信より優先度低</td>
+        <td style="text-align:center;"><span style="font-size:1rem;">△</span></td>
+        <td style="text-align:left;">RAGナレッジを活用したレコメンドとして対応</td>
+      </tr>
+      <tr>
+        <td><strong>行動</strong></td>
+        <td style="text-align:left;">購買・CP参加をトリガーにしたリアルタイム配信</td>
+        <td style="text-align:left;">イベント駆動の仕組みがない</td>
+        <td style="text-align:center;"><span style="font-size:1rem;">◯</span></td>
+        <td style="text-align:left;">トリガー配信で一部対応。メール追加は次期</td>
+      </tr>
+      <tr style="background: #EFF6FF;">
+        <td><strong>関係</strong></td>
+        <td style="text-align:left;">LINE配信の分析→企画→制作→配信→測定→改善の全8工程を自動化</td>
+        <td style="text-align:left;">手作業で週20時間超。属人化・品質ばらつき</td>
+        <td style="text-align:center;"><span style="font-size:1rem; color:#2563EB; font-weight:700;">◎</span></td>
+        <td style="text-align:left;"><strong>本設計の中核。</strong>8工程AIパイプラインを構築</td>
+      </tr>
+      <tr style="background: #EFF6FF;">
+        <td><strong>深化</strong></td>
+        <td style="text-align:left;">離脱予兆検知→リテンション施策の自動エスカレーション</td>
+        <td style="text-align:left;">離脱に気づくのが遅い。対応が画一的</td>
+        <td style="text-align:center;"><span style="font-size:1rem; color:#2563EB; font-weight:700;">◎</span></td>
+        <td style="text-align:left;"><strong>本設計で対応。</strong>8工程基盤+トリガー配信</td>
+      </tr>
+    </table>
+    <div class="accent-box"><strong>なぜLINE配信（関係・深化）から着手するか:</strong> ①工数削減効果が最も大きい（週20h→承認2回） ②CDPデータとの接続が最も整っている ③構築するAI基盤（LLM・RAG・MCP）が他ジャーニーの土台になる</div>
+  </div>
+</div>
+
+<div class="slide divider-slide">
+  <span class="section-number">SECTION 01</span>
+  <h2>AIオーケストレーター</h2>
+  <p class="section-sub">全体アーキテクチャと技術スタック</p>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>AIオーケストレーターはLLM・RAG・MCPの3層で構成される</h3></div>
+  <div class="slide-body">
+    <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="background: #2563EB; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;">LAYER 1</div>
+        <div style="flex: 1; background: #DBEAFE; border: 2px solid #2563EB; border-radius: 8px; padding: 16px 20px;">
+          <div style="font-weight: 700; color: #1E3A5F; margin-bottom: 4px;">LLM Engine（Claude API）</div>
+          <div style="font-size: 0.82rem; color: #64748B;">分析・企画・コピーライティング・改善提案。ワークフロー（Airflow）で8工程のDAGを管理</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="background: #F59E0B; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;">LAYER 2</div>
+        <div style="flex: 1; background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 8px; padding: 16px 20px;">
+          <div style="font-weight: 700; color: #1E3A5F; margin-bottom: 4px;">RAG Engine（Pinecone / pgvector）</div>
+          <div style="font-size: 0.82rem; color: #64748B;">過去配信実績・ガイドライン・法務ルール・商品情報・季節パターンを検索</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="background: #10B981; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;">LAYER 3</div>
+        <div style="flex: 1; background: #D1FAE5; border: 2px solid #10B981; border-radius: 8px; padding: 16px 20px;">
+          <div style="font-weight: 700; color: #1E3A5F; margin-bottom: 4px;">MCP Layer（外部システム接続）</div>
+          <div style="font-size: 0.82rem; color: #64748B; display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;">
+            <span style="background: white; padding: 3px 10px; border-radius: 999px; border: 1px solid #10B981; font-size: 0.78rem;">CDP MCP</span>
+            <span style="background: white; padding: 3px 10px; border-radius: 999px; border: 1px solid #10B981; font-size: 0.78rem;">LINE MCP</span>
+            <span style="background: white; padding: 3px 10px; border-radius: 999px; border: 1px solid #10B981; font-size: 0.78rem;">Braze MCP</span>
+            <span style="background: white; padding: 3px 10px; border-radius: 999px; border: 1px solid #10B981; font-size: 0.78rem;">Slack MCP</span>
+            <span style="background: white; padding: 3px 10px; border-radius: 999px; border: 1px solid #10B981; font-size: 0.78rem;">Product MCP</span>
+          </div>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 8px;">
+        <div style="font-size: 0.8rem; color: #64748B;">▲</div>
+        <div style="display: inline-block; background: #F1F5F9; border: 2px solid #94A3B8; border-radius: 8px; padding: 10px 32px; font-weight: 600; color: #475569;">CDP / DWH（BigQuery / Snowflake）</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>技術スタック詳細</h3></div>
+  <div class="slide-body">
+    <table class="data-table">
+      <tr><th>レイヤー</th><th>コンポーネント</th><th>技術選定</th><th>役割</th></tr>
+      <tr><td rowspan="2"><strong>AIエンジン</strong></td><td>LLM</td><td>Claude API</td><td style="text-align:left;">分析・企画・コピーライティング・改善提案</td></tr>
+      <tr><td>RAG</td><td>Pinecone / pgvector</td><td style="text-align:left;">過去実績・ガイドライン・法務ルール検索</td></tr>
+      <tr><td rowspan="3"><strong>MCP連携</strong></td><td>CDP MCP</td><td>BigQuery接続</td><td style="text-align:left;">12エンティティへのクエリ実行</td></tr>
+      <tr><td>LINE MCP</td><td>Messaging API</td><td style="text-align:left;">OA管理・メッセージ送信・配信結果取得</td></tr>
+      <tr><td>Braze MCP</td><td>Braze REST API</td><td style="text-align:left;">セグメント同期・キャンペーン作成</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>データはCDPからダッシュボードまで一方向に流れる</h3></div>
+  <p class="slide-description">技術スタックの各要素がどのようにデータを受け渡すかを示す。</p>
+  <div class="slide-body">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%;">
+      <!-- Row 1: データソース + 入力MCP -->
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="background: #F1F5F9; border: 2px solid #94A3B8; border-radius: 8px; padding: 10px 28px; font-weight: 600; color: #475569;">CDP / DWH</div>
+        <div style="color: #2563EB; font-size: 1rem;">→</div>
+        <div style="background: #D1FAE5; border: 2px solid #10B981; border-radius: 8px; padding: 10px 16px; text-align: center;">
+          <div style="font-weight: 600; color: #065F46; font-size: 0.8rem; margin-bottom: 4px;">入力MCP（データ取得）</div>
+          <div style="display: flex; gap: 6px;">
+            <span style="background: white; padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; border: 1px solid #10B981;">CDP MCP</span>
+            <span style="background: white; padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; border: 1px solid #10B981;">Product MCP</span>
+          </div>
+        </div>
+      </div>
+      <div style="color: #2563EB; font-size: 1rem;">↓</div>
+      <!-- Row 2: AIオーケストレーター -->
+      <div style="background: #EFF6FF; border: 2px solid #2563EB; border-radius: 12px; padding: 16px 32px; text-align: center;">
+        <div style="font-weight: 700; color: #1E3A5F; font-size: 0.95rem;">AIオーケストレーター</div>
+        <div style="display: flex; gap: 10px; margin-top: 8px; align-items: center; justify-content: center;">
+          <div style="background: #DBEAFE; border: 1px solid #93C5FD; border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; font-weight: 600;">LLM</div>
+          <div style="font-size: 0.8rem; color: #2563EB;">⇄</div>
+          <div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; font-weight: 600;">RAG</div>
+          <div style="font-size: 0.8rem; color: #2563EB;">→</div>
+          <div style="background: #D1FAE5; border: 1px solid #6EE7B7; border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; font-weight: 600;">Airflow</div>
+        </div>
+      </div>
+      <div style="color: #2563EB; font-size: 1rem;">↓</div>
+      <!-- Row 3: 出力MCP + 配信先 -->
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 8px; padding: 10px 16px; text-align: center;">
+          <div style="font-weight: 600; color: #92400E; font-size: 0.8rem; margin-bottom: 4px;">出力MCP（指示・通知）</div>
+          <div style="display: flex; gap: 6px;">
+            <span style="background: white; padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; border: 1px solid #F59E0B;">LINE MCP</span>
+            <span style="background: white; padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; border: 1px solid #F59E0B;">Braze MCP</span>
+            <span style="background: white; padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; border: 1px solid #F59E0B;">Slack MCP</span>
+          </div>
+        </div>
+        <div style="color: #F59E0B; font-size: 1rem;">→</div>
+        <div style="display: flex; gap: 8px;">
+          <div style="background: #10B981; color: white; border-radius: 8px; padding: 8px 14px; font-weight: 600; font-size: 0.82rem;">LINE</div>
+          <div style="background: #E2E8F0; border-radius: 8px; padding: 8px 14px; font-size: 0.82rem; color: #64748B;">メール</div>
+          <div style="background: #E2E8F0; border-radius: 8px; padding: 8px 14px; font-size: 0.82rem; color: #64748B;">広告</div>
+          <div style="background: #E2E8F0; border-radius: 8px; padding: 8px 14px; font-size: 0.82rem; color: #64748B;">Push</div>
+        </div>
+      </div>
+      <div style="color: #F59E0B; font-size: 1rem;">↓ 配信結果</div>
+      <!-- Row 4: ダッシュボード + フィードバック -->
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 8px; padding: 10px 28px; font-weight: 600; color: #92400E;">ダッシュボード（効果測定・監視）</div>
+        <div style="color: #64748B; font-size: 0.78rem;">── フィードバック → AIオーケストレーター</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>RAGに格納するナレッジと更新頻度</h3></div>
+  <div class="slide-body">
+    <table class="data-table">
+      <tr><th>ナレッジカテゴリ</th><th>具体的内容</th><th>更新頻度</th></tr>
+      <tr><td><strong>過去配信実績</strong></td><td style="text-align:left;">message_type別の開封率・CTR、効果マトリクス</td><td>配信後に自動追加</td></tr>
+      <tr><td><strong>ブランドガイドライン</strong></td><td style="text-align:left;">トーン&amp;マナー、使用可能/NG表現</td><td>四半期（手動）</td></tr>
+      <tr><td><strong>法務ルール</strong></td><td style="text-align:left;">酒類広告規制、景品表示法、LINE利用規約</td><td>法改正時（手動）</td></tr>
+      <tr><td><strong>商品情報</strong></td><td style="text-align:left;">商品説明文・訴求ポイント・季節性情報</td><td>新商品投入時</td></tr>
+      <tr><td><strong>季節性パターン</strong></td><td style="text-align:left;">カテゴリ×月の販売傾向、気温相関</td><td>月次（自動）</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>MCP Serverが提供するTool一覧</h3></div>
+  <div class="slide-body">
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; width: 100%;">
+      <div>
+        <div style="font-weight: 700; color: #1E3A5F; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 2px solid #2563EB;">CDP MCP Server</div>
+        <table class="data-table" style="font-size: 0.78rem;">
+          <tr><th>Tool</th><th>実行内容</th></tr>
+          <tr><td><code>query_segment</code></td><td>セグメント条件で顧客抽出</td></tr>
+          <tr><td><code>get_customer</code></td><td>顧客プロファイル取得</td></tr>
+          <tr><td><code>get_computed</code></td><td>算出属性取得</td></tr>
+          <tr><td><code>get_consent</code></td><td>同意状態確認</td></tr>
+          <tr><td><code>get_purchases</code></td><td>購買履歴取得</td></tr>
+          <tr><td><code>get_line_stats</code></td><td>LINE配信実績集計</td></tr>
+        </table>
+      </div>
+      <div>
+        <div style="font-weight: 700; color: #1E3A5F; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 2px solid #2563EB;">LINE MCP Server</div>
+        <table class="data-table" style="font-size: 0.78rem;">
+          <tr><th>Tool</th><th>実行内容</th></tr>
+          <tr><td><code>send_flex</code></td><td>Flexメッセージ配信</td></tr>
+          <tr><td><code>send_carousel</code></td><td>カルーセル配信</td></tr>
+          <tr><td><code>send_richvideo</code></td><td>リッチビデオ配信</td></tr>
+          <tr><td><code>get_delivery</code></td><td>配信結果取得</td></tr>
+          <tr><td><code>list_oa</code></td><td>OAリスト・配信枠確認</td></tr>
+        </table>
+      </div>
+      <div>
+        <div style="font-weight: 700; color: #1E3A5F; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 2px solid #2563EB;">Slack / Braze / Product MCP</div>
+        <table class="data-table" style="font-size: 0.78rem;">
+          <tr><th>Tool</th><th>実行内容</th></tr>
+          <tr><td><code>request_approval</code></td><td>承認ボタン付き通知</td></tr>
+          <tr><td><code>send_report</code></td><td>レポート通知</td></tr>
+          <tr><td><code>sync_segment</code></td><td>セグメント同期</td></tr>
+          <tr><td><code>create_campaign</code></td><td>キャンペーン作成</td></tr>
+          <tr><td><code>get_product</code></td><td>商品マスタ取得</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide divider-slide">
+  <span class="section-number">SECTION 02</span>
+  <h2>AI自動処理フロー</h2>
+  <p class="section-sub">8工程の詳細と承認ゲート</p>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>全8工程は2つの承認ゲートで区切られる</h3></div>
+  <div class="slide-body">
+    <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="background: #D1FAE5; color: #065F46; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; white-space: nowrap; min-width: 80px;">AI自律処理</div>
+        <div style="display: flex; align-items: center; gap: 6px; flex: 1;">
+          <div style="flex: 1; background: #EFF6FF; border: 1px solid #93C5FD; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 1</strong><br>データ分析</div>
+          <div style="color: #2563EB;">→</div>
+          <div style="flex: 1; background: #EFF6FF; border: 1px solid #93C5FD; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 2</strong><br>セグメント選定</div>
+          <div style="color: #2563EB;">→</div>
+          <div style="flex: 1; background: #EFF6FF; border: 1px solid #93C5FD; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 3</strong><br>メッセージ企画</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="background: #FEF3C7; color: #92400E; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; white-space: nowrap; min-width: 80px;">承認ゲート</div>
+        <div style="display: flex; align-items: center; gap: 6px; flex: 1;">
+          <div style="flex: 1; background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;">🚪 <strong>承認①</strong><br>配信プラン</div>
+          <div style="color: #F59E0B;">→</div>
+          <div style="flex: 1; background: #EFF6FF; border: 1px solid #93C5FD; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 4</strong><br>クリエイティブ制作</div>
+          <div style="color: #F59E0B;">→</div>
+          <div style="flex: 1; background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;">🚪 <strong>承認②</strong><br>クリエイティブ</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="background: #D1FAE5; color: #065F46; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; white-space: nowrap; min-width: 80px;">AI完全自動</div>
+        <div style="display: flex; align-items: center; gap: 6px; flex: 1;">
+          <div style="flex: 1; background: #D1FAE5; border: 1px solid #6EE7B7; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 5</strong><br>配信設定</div>
+          <div style="color: #10B981;">→</div>
+          <div style="flex: 1; background: #D1FAE5; border: 1px solid #6EE7B7; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 6</strong><br>配信実行</div>
+          <div style="color: #10B981;">→</div>
+          <div style="flex: 1; background: #D1FAE5; border: 1px solid #6EE7B7; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 7</strong><br>効果測定</div>
+          <div style="color: #10B981;">→</div>
+          <div style="flex: 1; background: #D1FAE5; border: 1px solid #6EE7B7; border-radius: 6px; padding: 8px; text-align: center; font-size: 0.78rem;"><strong>Step 8</strong><br>改善提案</div>
+        </div>
+      </div>
+      <div style="text-align: center; font-size: 0.75rem; color: #64748B; margin-top: -4px;">⟳ Step 8 の改善提案 → 次サイクルの Step 1 に自動投入</div>
+    </div>
+    <div class="accent-box">人間の介在は2回の承認操作のみ。それ以外はAIが自律的に処理する。</div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>Step 1-2: データ分析とセグメント選定</h3></div>
+  <div class="slide-body">
+    <table class="data-table" style="font-size: 0.82rem;">
+      <tr><th style="width:140px;">Step</th><th style="width:100px;">項目</th><th>詳細</th></tr>
+      <tr><td rowspan="4"><strong>Step 1</strong> データ分析 <span style="background:#D1FAE5;color:#10B981;padding:2px 8px;border-radius:999px;font-size:0.7rem;font-weight:600;">Full Auto</span></td><td>データ取得</td><td style="text-align:left;">CDP MCP経由でengagement_score、churn_risk_score、購買データを取得</td></tr>
+      <tr><td>実績検索</td><td style="text-align:left;">RAGから過去配信実績を検索</td></tr>
+      <tr><td>分析内容</td><td style="text-align:left;">セグメント別トレンド・季節性・異常値を分析</td></tr>
+      <tr><td>出力</td><td style="text-align:left;">インサイトレポート（セグメント別KPI推移、推奨アクション）</td></tr>
+      <tr><td rowspan="3"><strong>Step 2</strong> セグメント選定 <span style="background:#D1FAE5;color:#10B981;padding:2px 8px;border-radius:999px;font-size:0.7rem;font-weight:600;">Full Auto</span></td><td>対象選定</td><td style="text-align:left;">segment_membershipからLINE配信対象を選定</td></tr>
+      <tr><td>法的フィルタ</td><td style="text-align:left;">consent_status=opted_in、friend_status≠blocked、is_alcohol_eligible（酒類時）</td></tr>
+      <tr><td>出力</td><td style="text-align:left;">配信対象リスト + 予測開封率</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>Step 3-4: メッセージ企画とクリエイティブ制作</h3></div>
+  <div class="slide-body">
+    <table class="data-table" style="font-size: 0.82rem;">
+      <tr><th style="width:140px;">Step</th><th style="width:100px;">項目</th><th>詳細</th></tr>
+      <tr><td rowspan="4"><strong>Step 3</strong> メッセージ企画 <span style="background:#FEF3C7;color:#F59E0B;padding:2px 8px;border-radius:999px;font-size:0.7rem;font-weight:600;">→ 承認①</span></td><td>照合</td><td style="text-align:left;">preferred_category / drinking_sceneをRAGで過去実績と照合</td></tr>
+      <tr><td>企画</td><td style="text-align:left;">テーマ・メッセージ方針を起案</td></tr>
+      <tr><td>推奨</td><td style="text-align:left;">最適message_type（text / flex / rich_video / carousel）を推奨</td></tr>
+      <tr><td>出力</td><td style="text-align:left;">配信プラン（テーマ、方針、タイミング案、想定KPI）</td></tr>
+      <tr><td rowspan="5"><strong>Step 4</strong> クリエイティブ制作 <span style="background:#FEF3C7;color:#F59E0B;padding:2px 8px;border-radius:999px;font-size:0.7rem;font-weight:600;">→ 承認②</span></td><td>生成</td><td style="text-align:left;">承認済みプランに基づきFlexメッセージJSON / カルーセル / コピーを生成</td></tr>
+      <tr><td>参照</td><td style="text-align:left;">RAGからブランドガイドライン参照</td></tr>
+      <tr><td>商品情報</td><td style="text-align:left;">Product MCPから商品画像・情報を取得</td></tr>
+      <tr><td>チェック</td><td style="text-align:left;">法務自動チェック（酒類表現・景品表示法）</td></tr>
+      <tr><td>出力</td><td style="text-align:left;">メッセージプレビュー + 法務チェック結果</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>Step 5-8: 配信設定から改善提案まで</h3></div>
+  <div class="slide-body">
+    <table class="data-table" style="font-size: 0.82rem;">
+      <tr><th>Step</th><th>処理</th><th>AIの具体的な動き</th><th>安全装置</th></tr>
+      <tr><td><strong>5</strong> 配信設定</td><td style="text-align:left;">best_contact_day/hourに基づくスケジュール最適化</td><td style="text-align:left;">OA選定（5アカウント）、週2通上限管理</td><td>—</td></tr>
+      <tr><td><strong>6</strong> 配信実行</td><td style="text-align:left;">配信直前に法的フィルタ再実行（三重チェック）</td><td style="text-align:left;">LINE MCP / Braze MCP経由で配信</td><td>配信数±20%超で自動停止</td></tr>
+      <tr><td><strong>7</strong> 効果測定</td><td style="text-align:left;">配信→開封→クリック ファネルを自動集計</td><td style="text-align:left;">異常値検知時にSlack通知</td><td>ブロック率スパイク検知</td></tr>
+      <tr><td><strong>8</strong> 改善提案</td><td style="text-align:left;">効果測定結果をRAGの過去実績と比較</td><td style="text-align:left;">改善点を次回Step 1に自動投入</td><td>—</td></tr>
+    </table>
+    <div class="accent-box">全ステップが <span style="background:#D1FAE5;color:#10B981;padding:2px 8px;border-radius:999px;font-size:0.7rem;font-weight:600;">Full Auto</span> — 承認②通過後は人間の介在なしに配信・測定・改善まで完了する。</div>
+  </div>
+</div>
+
+<div class="slide divider-slide">
+  <span class="section-number">SECTION 03</span>
+  <h2>4つの配信パターン</h2>
+  <p class="section-sub">定期・トリガー・ウェルカム・離脱防止</p>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>パターンA: 定期配信（週次ルーティン）</h3></div>
+  <div class="slide-body">
+    <div class="diagram-flow-h" style="gap: 4px; margin-bottom: 16px;">
+      <div class="flow-step" style="min-width: 90px; padding: 10px;">
+        <div class="flow-icon">月</div>
+        <div class="flow-label" style="font-size: 0.75rem;">月曜AM</div>
+        <div class="flow-desc" style="font-size: 0.7rem;">AI Step 1-3</div>
+      </div>
+      <div class="flow-arrow" style="font-size: 1rem;">→</div>
+      <div style="background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 8px; padding: 8px 10px; text-align: center; font-size: 0.7rem; font-weight: 600;">🚪承認①</div>
+      <div class="flow-arrow" style="font-size: 1rem;">→</div>
+      <div class="flow-step" style="min-width: 90px; padding: 10px;">
+        <div class="flow-icon">月</div>
+        <div class="flow-label" style="font-size: 0.75rem;">月曜PM</div>
+        <div class="flow-desc" style="font-size: 0.7rem;">承認→Step 4</div>
+      </div>
+      <div class="flow-arrow" style="font-size: 1rem;">→</div>
+      <div style="background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 8px; padding: 8px 10px; text-align: center; font-size: 0.7rem; font-weight: 600;">🚪承認②</div>
+      <div class="flow-arrow" style="font-size: 1rem;">→</div>
+      <div class="flow-step" style="min-width: 90px; padding: 10px; background: #D1FAE5; border-color: #10B981;">
+        <div class="flow-icon" style="background: #10B981;">配</div>
+        <div class="flow-label" style="font-size: 0.75rem;">火〜木</div>
+        <div class="flow-desc" style="font-size: 0.7rem;">自動配信</div>
+      </div>
+      <div class="flow-arrow" style="font-size: 1rem;">→</div>
+      <div class="flow-step" style="min-width: 90px; padding: 10px;">
+        <div class="flow-icon">金</div>
+        <div class="flow-label" style="font-size: 0.75rem;">金曜</div>
+        <div class="flow-desc" style="font-size: 0.7rem;">Step 7-8</div>
+      </div>
+    </div>
+    <table class="data-table" style="font-size: 0.82rem;">
+      <tr><th>曜日</th><th>担当</th><th>処理内容</th></tr>
+      <tr><td>月曜AM</td><td>AI</td><td style="text-align:left;">データ分析→セグメント選定→メッセージ企画（Step 1-3）</td></tr>
+      <tr><td>月曜PM</td><td>人間+AI</td><td style="text-align:left;">承認①→クリエイティブ制作→承認②（Step 4）</td></tr>
+      <tr><td>火〜木</td><td>AI</td><td style="text-align:left;">各顧客の最適タイミングで自動配信（Step 5-6）</td></tr>
+      <tr><td>金曜</td><td>AI</td><td style="text-align:left;">効果測定 + 改善提案 → 次週月曜のStep 1入力（Step 7-8）</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>パターンB: トリガー配信（イベント駆動）</h3></div>
+  <div class="slide-body">
+    <table class="data-table" style="font-size: 0.82rem;">
+      <tr><th>トリガー</th><th>データソース</th><th>AI処理</th><th>承認</th></tr>
+      <tr><td>EC購入完了</td><td>digital_behavior_log</td><td style="text-align:left;">購買商品からレコメンドをRAG生成</td><td>不要</td></tr>
+      <tr><td>カート離脱（24h）</td><td>digital_behavior_log</td><td style="text-align:left;">price_sensitivity連動クーポン額決定</td><td>不要</td></tr>
+      <tr><td>CP参加</td><td>campaign_participation</td><td style="text-align:left;">参加CP種別で次回案内を自動選定</td><td>不要</td></tr>
+      <tr><td>自販機アプリ購入</td><td>vending_machine_event</td><td style="text-align:left;">スタンプ進捗計算</td><td>不要</td></tr>
+      <tr><td>エンゲージメント急落</td><td>computed_attributes</td><td style="text-align:left;">類似ケースの効果的施策を検索</td><td><strong>要承認</strong></td></tr>
+      <tr><td>churn_risk &gt; 0.7</td><td>computed_attributes</td><td style="text-align:left;">CLV×リテンション確率でオファー額最適化</td><td><strong>要承認</strong></td></tr>
+    </table>
+    <div class="accent-box">定型トリガー配信は承認不要で即時配信。エンゲージメント急落・高離脱リスクのみ承認ゲートを通す。</div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>パターンC: ウェルカムシーケンス（新規友だち）</h3></div>
+  <div class="slide-body">
+    <div class="diagram-flow-h" style="gap: 4px; margin-bottom: 16px;">
+      <div class="flow-step" style="min-width: 80px; padding: 10px;">
+        <div class="flow-icon">0</div>
+        <div class="flow-label" style="font-size: 0.75rem;">Day 0</div>
+        <div class="flow-desc" style="font-size: 0.7rem;">友だち追加<br>サンクス</div>
+      </div>
+      <div class="flow-arrow" style="font-size: 1rem;">→</div>
+      <div class="flow-step" style="min-width: 80px; padding: 10px;">
+        <div class="flow-icon">1</div>
+        <div class="flow-label" style="font-size: 0.75rem;">Day 1</div>
+        <div class="flow-desc" style="font-size: 0.7rem;">ブランド紹介<br>rich_video</div>
+      </div>
+      <div class="flow-arrow" style="font-size: 1rem;">→</div>
+      <div style="background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 8px; padding: 10px; text-align: center; min-width: 130px;">
+        <div style="font-weight: 700; font-size: 0.78rem;">Day 3 判定</div>
+        <div style="display: flex; gap: 4px; margin-top: 4px; justify-content: center;">
+          <span style="background: #D1FAE5; padding: 2px 6px; border-radius: 4px; font-size: 0.62rem;">true→酒類含む</span>
+          <span style="background: #FEE2E2; padding: 2px 6px; border-radius: 4px; font-size: 0.62rem;">false→ソフトのみ</span>
+        </div>
+      </div>
+      <div class="flow-arrow" style="font-size: 1rem;">→</div>
+      <div class="flow-step" style="min-width: 80px; padding: 10px;">
+        <div class="flow-icon">7</div>
+        <div class="flow-label" style="font-size: 0.75rem;">Day 7</div>
+        <div class="flow-desc" style="font-size: 0.7rem;">CP案内</div>
+      </div>
+      <div class="flow-arrow" style="font-size: 1rem;">→</div>
+      <div class="flow-step" style="min-width: 80px; padding: 10px;">
+        <div class="flow-icon">14</div>
+        <div class="flow-label" style="font-size: 0.75rem;">Day 14</div>
+        <div class="flow-desc" style="font-size: 0.7rem;">嗜好アンケート</div>
+      </div>
+    </div>
+    <div class="diagram-bullets-v">
+      <div class="bullet-item-v"><div class="bullet-marker"></div><div class="bullet-text">全ステップが<strong>事前承認済みテンプレート</strong>で Full Auto 動作</div></div>
+      <div class="bullet-item-v"><div class="bullet-marker"></div><div class="bullet-text">Day 3: <code>is_alcohol_eligible</code> で商品レコメンドを自動分岐</div></div>
+      <div class="bullet-item-v"><div class="bullet-marker"></div><div class="bullet-text">Day 7: <code>campaign_master</code> から実施中CPをAIが自動選定</div></div>
+      <div class="bullet-item-v"><div class="bullet-marker"></div><div class="bullet-text">Day 14: アンケート結果は <code>computed_attributes</code> に自動反映</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>パターンD: 離脱防止シーケンス</h3></div>
+  <p class="slide-description">churn_risk_scoreに応じたAI自動エスカレーション</p>
+  <div class="slide-body">
+    <div style="display: flex; gap: 24px; width: 100%;">
+      <div style="flex: 2;">
+        <div class="diagram-flow-v" style="gap: 4px;">
+          <div class="flow-v-step">
+            <div class="flow-v-node" style="background: #FEF3C7; border-color: #F59E0B;">判定</div>
+            <div class="flow-v-detail">churn_risk_score を確認</div>
+          </div>
+          <div class="flow-v-step">
+            <div class="flow-v-node">Stage 1</div>
+            <div class="flow-v-detail">0.6-0.7: ソフトリエンゲージ</div>
+          </div>
+          <div class="flow-v-step">
+            <div class="flow-v-node">Stage 2</div>
+            <div class="flow-v-detail">0.7-0.8: インセンティブ</div>
+          </div>
+          <div class="flow-v-step">
+            <div class="flow-v-node">Stage 3</div>
+            <div class="flow-v-detail">&gt; 0.8: 最終リテンション → 承認ゲート</div>
+          </div>
+          <div class="flow-v-step">
+            <div class="flow-v-node" style="background: #FEE2E2; border-color: #EF4444;">削減</div>
+            <div class="flow-v-detail">30日無反応 → 週2通→月1通</div>
+          </div>
+        </div>
+      </div>
+      <div style="flex: 3;">
+        <table class="data-table" style="font-size: 0.82rem;">
+          <tr><th>Stage</th><th>churn_risk</th><th>AI処理</th></tr>
+          <tr><td>1</td><td>0.6–0.7</td><td style="text-align:left;">RAGで類似顧客の反応が良かったコンテンツを検索、rich_videoで案内</td></tr>
+          <tr><td>2</td><td>0.7–0.8</td><td style="text-align:left;">price_sensitivity × CLVからクーポン額を最適化</td></tr>
+          <tr><td>3</td><td>&gt; 0.8</td><td style="text-align:left;">LLMがパーソナルメッセージを個別生成 → <strong>承認ゲート経由</strong></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide divider-slide">
+  <span class="section-number">SECTION 04</span>
+  <h2>飲料業界特有の制約</h2>
+  <p class="section-sub">AI自動化における業界固有のリスク対応</p>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>5つの業界制約とシステムの対応策</h3></div>
+  <div class="slide-body">
+    <table class="data-table" style="font-size: 0.82rem;">
+      <tr><th>#</th><th>制約</th><th>自動化への影響</th><th>AI/システムの対応策</th></tr>
+      <tr><td>1</td><td>酒類広告規制</td><td style="text-align:left;">未成年・非適格者への配信排除</td><td style="text-align:left;">Step 2・6でis_alcohol_eligible + consent_statusの2段階チェック</td></tr>
+      <tr><td>2</td><td>季節性の強い商品</td><td style="text-align:left;">月次自動切替が必要</td><td style="text-align:left;">RAGに季節パターン格納 + 外部気温API連携</td></tr>
+      <tr><td>3</td><td>間接購買チャネル</td><td style="text-align:left;">LINE→コンビニ購買の効果測定困難</td><td style="text-align:left;">レシートUL紐付けで間接効果を推定</td></tr>
+      <tr><td>4</td><td>5つのLINE OA</td><td style="text-align:left;">同一顧客への重複防止</td><td style="text-align:left;">unified_customer_id × line_oa_id × 週で履歴確認、週2通上限</td></tr>
+      <tr><td>5</td><td>LINE従量課金</td><td style="text-align:left;">無駄な配信 = コスト増</td><td style="text-align:left;">predicted_clv × 開封率予測でROI閾値フィルタ</td></tr>
+    </table>
+    <div class="accent-box">酒類規制はStep 2（セグメント選定）とStep 6（配信実行直前）の2段階で自動チェック。RAGの法務ルールナレッジで表現もフィルタする。</div>
+  </div>
+</div>
+
+<div class="slide divider-slide">
+  <span class="section-number">SECTION 05</span>
+  <h2>ダッシュボード連携</h2>
+  <p class="section-sub">自動化フローとダッシュボードの接続</p>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>自動化フローはダッシュボードを「読み」「書き」する</h3></div>
+  <div class="slide-body">
+    <div style="display: flex; gap: 24px; width: 100%; align-items: flex-start;">
+      <div style="flex: 1;">
+        <div style="font-weight: 700; color: #1E3A5F; margin-bottom: 8px;">ダッシュボード</div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div style="background: #DBEAFE; border: 1px solid #93C5FD; border-radius: 6px; padding: 8px 12px; font-size: 0.8rem;"><strong>DB3</strong> LINE CRM</div>
+          <div style="background: #DBEAFE; border: 1px solid #93C5FD; border-radius: 6px; padding: 8px 12px; font-size: 0.8rem;"><strong>DB4</strong> リテンション</div>
+          <div style="background: #DBEAFE; border: 1px solid #93C5FD; border-radius: 6px; padding: 8px 12px; font-size: 0.8rem;"><strong>DB6</strong> 商品デジタル</div>
+          <div style="background: #DBEAFE; border: 1px solid #93C5FD; border-radius: 6px; padding: 8px 12px; font-size: 0.8rem;"><strong>DB7</strong> セグメント</div>
+        </div>
+      </div>
+      <div style="flex: 2;">
+        <table class="data-table" style="font-size: 0.82rem;">
+          <tr><th>自動化工程</th><th>読み取るDB</th><th>書き込むDB</th></tr>
+          <tr><td>Step 1 データ分析</td><td style="text-align:left;">4 リテンション、7 セグメント</td><td>—</td></tr>
+          <tr><td>Step 2 セグメント選定</td><td style="text-align:left;">7 セグメント比較・反応率</td><td>—</td></tr>
+          <tr><td>Step 3 メッセージ企画</td><td style="text-align:left;">3 LINE CRM、6 商品デジタル</td><td>—</td></tr>
+          <tr><td>Step 7 効果測定</td><td>—</td><td style="text-align:left;">3 LINE CRM</td></tr>
+          <tr><td>Step 8 改善提案</td><td>—</td><td style="text-align:left;">6 クロスチャネル購買</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide divider-slide">
+  <span class="section-number">SECTION 06</span>
+  <h2>承認画面</h2>
+  <p class="section-sub">マーケターが操作する3つの画面</p>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>人間が操作する画面は3つだけ</h3></div>
+  <p class="slide-description">AI自動化フロー全体で人間が操作する画面は以下の<strong>3つ</strong>のみ。それ以外は全てAIが自律処理する。</p>
+  <div class="slide-body">
+    <table class="data-table">
+      <tr><th>#</th><th>画面名</th><th>タイミング</th><th>目的</th></tr>
+      <tr><td>A</td><td><strong>配信プラン承認画面</strong></td><td>承認ゲート①（Step 3→4）</td><td style="text-align:left;">配信対象・メッセージ方針・タイミングの承認</td></tr>
+      <tr><td>B</td><td><strong>クリエイティブ承認画面</strong></td><td>承認ゲート②（Step 4→5）</td><td style="text-align:left;">メッセージプレビュー・法務チェック結果の確認</td></tr>
+      <tr><td>C</td><td><strong>モニタリングダッシュボード</strong></td><td>常時（異常時にSlack通知）</td><td style="text-align:left;">効果測定結果・異常検知の確認</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>画面A: 配信プラン承認画面</h3></div>
+  <div class="slide-body">
+    <div class="layout-split-panel">
+      <div class="split-panel-left">
+        <h4 class="split-panel-heading">トリガー: Step 1-3完了 → Slack通知</h4>
+        <div style="font-weight: 600; margin-bottom: 6px; color: #1E3A5F;">表示セクション:</div>
+        <ul class="split-panel-list">
+          <li>配信概要（名称・日程・対象OA）</li>
+          <li>AIインサイト（開封率推移・季節性）</li>
+          <li>配信対象セグメント（人数・フィルタ適用状況・予測KPI）</li>
+          <li>メッセージ方針（テーマ・推奨message_type）</li>
+          <li>配信タイミング（best_contact分布）</li>
+          <li><strong>[承認]</strong> / <strong>[修正指示]</strong> ボタン</li>
+        </ul>
+        <div style="font-size: 0.82rem; color: #64748B; margin-top: 8px;">修正指示は自然言語で入力 → AIが該当Stepを再実行して再提出</div>
+      </div>
+      <div class="split-panel-right">
+        <img src="../input/screen_a_plan_approval.png" alt="画面A: 配信プラン承認">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>画面A: 表示例 — セグメントとメッセージ方針</h3></div>
+  <div class="slide-body">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%;">
+      <div>
+        <div style="font-weight: 700; color: #1E3A5F; margin-bottom: 8px;">配信対象セグメント</div>
+        <table class="data-table" style="font-size: 0.82rem;">
+          <tr><th>項目</th><th>値</th></tr>
+          <tr><td>セグメント</td><td>health_tokuho</td></tr>
+          <tr><td>対象人数</td><td>823人</td></tr>
+          <tr><td>line_messaging = opted_in</td><td>✓</td></tr>
+          <tr><td>friend_status ≠ blocked</td><td>✓</td></tr>
+          <tr><td>予測開封率</td><td>62.3%</td></tr>
+          <tr><td>予測CTR</td><td>14.1%</td></tr>
+          <tr><td>配信コスト</td><td>¥4,115（@¥5.0/通）</td></tr>
+        </table>
+      </div>
+      <div>
+        <div style="font-weight: 700; color: #1E3A5F; margin-bottom: 8px;">メッセージ方針</div>
+        <table class="data-table" style="font-size: 0.82rem;">
+          <tr><th>項目</th><th>値</th></tr>
+          <tr><td>テーマ</td><td>春の健康習慣 × トクホ茶</td></tr>
+          <tr><td>message_type</td><td>carousel（3品比較）</td></tr>
+          <tr><td>訴求軸</td><td>健康志向(0.6+) × 季節性</td></tr>
+          <tr><td>過去類似配信</td><td>開封率58%, CTR 12%</td></tr>
+          <tr><td>AI改善ポイント</td><td>CTA文言を具体化</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>画面B: クリエイティブ承認画面</h3></div>
+  <div class="slide-body">
+    <div class="layout-split-panel">
+      <div class="split-panel-left">
+        <h4 class="split-panel-heading">トリガー: 承認①通過 → Step 4完了 → Slack通知</h4>
+        <div style="font-weight: 600; margin-bottom: 6px; color: #1E3A5F;">表示セクション:</div>
+        <ul class="split-panel-list">
+          <li>LINEプレビュー（Flex/carousel/rich_video）</li>
+          <li>法務チェック結果（PASS/WARN/FAIL）</li>
+          <li>ブランドガイドライン適合状況</li>
+          <li><strong>[承認]</strong> / <strong>[修正指示]</strong> ボタン</li>
+        </ul>
+        <div style="font-weight: 600; margin: 12px 0 6px; color: #1E3A5F;">法務チェック例:</div>
+        <table class="data-table" style="font-size: 0.82rem;">
+          <tr><th>チェック項目</th><th>結果</th></tr>
+          <tr><td>酒類表現</td><td>✓ PASS</td></tr>
+          <tr><td>景品表示法</td><td>✓ PASS</td></tr>
+          <tr><td>薬機法</td><td>✓ PASS</td></tr>
+          <tr><td>確認推奨</td><td>⚠ 許可表示と一致、OK</td></tr>
+        </table>
+      </div>
+      <div class="split-panel-right">
+        <img src="../input/screen_b_creative_approval.png" alt="画面B: クリエイティブ承認">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>画面B: カルーセルカード構成例</h3></div>
+  <div class="slide-body">
+    <table class="data-table">
+      <tr><th>カード#</th><th>商品名</th><th>コピー</th><th>CTA</th></tr>
+      <tr><td>1</td><td>伊右衛門 特茶</td><td style="text-align:left;">「春から始める、毎日のトクホ習慣」</td><td>詳しく見る</td></tr>
+      <tr><td>2</td><td>GREEN DA・KA・RA</td><td style="text-align:left;">「食事と一緒に、脂肪の吸収を抑える」</td><td>お得に試す</td></tr>
+      <tr><td>3</td><td>胡麻麦茶</td><td style="text-align:left;">「血圧が気になる方へ、毎日の一杯」</td><td>成分を見る</td></tr>
+    </table>
+    <div class="accent-box">修正指示の例: 「CTA文言をもっと行動喚起的に」→ AIがStep 4を再実行し再提出</div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>画面C: モニタリングダッシュボード</h3></div>
+  <div class="slide-body">
+    <div class="layout-split-panel">
+      <div class="split-panel-left">
+        <h4 class="split-panel-heading">常時表示 + 異常時にSlack通知で誘導</h4>
+        <div style="font-weight: 600; margin-bottom: 6px; color: #1E3A5F;">KPIカード例:</div>
+        <table class="data-table" style="font-size: 0.82rem;">
+          <tr><th>指標</th><th>今週</th><th>前週比</th></tr>
+          <tr><td>配信数</td><td>2,847通</td><td>+312</td></tr>
+          <tr><td>開封率</td><td>61.2%</td><td>+2.1pt</td></tr>
+          <tr><td>CTR</td><td>13.4%</td><td>+0.8pt</td></tr>
+          <tr><td>ブロック率</td><td>1.2%</td><td>-0.3pt</td></tr>
+        </table>
+        <div style="font-weight: 600; margin: 12px 0 6px; color: #1E3A5F;">アラート検知ルール:</div>
+        <table class="data-table" style="font-size: 0.82rem;">
+          <tr><th>ルール</th><th>閾値</th><th>アクション</th></tr>
+          <tr><td>ブロック率スパイク</td><td>+2pt/週</td><td>Slack通知</td></tr>
+          <tr><td>開封率急落</td><td>-10pt/週</td><td>Slack通知</td></tr>
+          <tr><td>配信数異常</td><td>±20%超</td><td>自動停止</td></tr>
+        </table>
+      </div>
+      <div class="split-panel-right">
+        <img src="../input/screen_c_monitoring.png" alt="画面C: モニタリング">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide divider-slide">
+  <span class="section-number">SECTION 07</span>
+  <h2>ダッシュボード詳細</h2>
+  <p class="section-sub">LINE CRM / リテンション / 商品デジタル / セグメント</p>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>DB8: LINE CRM分析ダッシュボード</h3></div>
+  <div class="slide-body">
+    <div class="layout-split-panel">
+      <div class="split-panel-left">
+        <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 12px;">Step 7（効果測定）が書き込み、Step 3（メッセージ企画）が読み取る。</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">8-A 友だち基盤ヘルス</div>
+        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 10px;">KPIカード + 日別推移面グラフ。ブロック率スパイク検知アラート</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">8-B メッセージ効果分析</div>
+        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 10px;">message_type別の開封率・CTRを棒グラフ比較（開封率 40-70%、CTR 5-20%）</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">8-C LINE → 購買アトリビューション</div>
+        <div style="font-size: 0.82rem; color: #475569;">サンキー: 配信→開封→クリック→サイト→購買</div>
+      </div>
+      <div class="split-panel-right">
+        <img src="../input/db08_line_crm.png" alt="DB8: LINE CRM">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>DB9: 顧客エンゲージメント・リテンション</h3></div>
+  <div class="slide-body">
+    <div class="layout-split-panel">
+      <div class="split-panel-left">
+        <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 12px;">Step 1（データ分析）が読み取り、離脱防止シーケンスのトリガー判定に使用。</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">9-A エンゲージメントスコア分布</div>
+        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 10px;">ヒストグラム + 層間移動図（active / dormant / churned）</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">9-B 離脱リスクヒートマップ</div>
+        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 10px;">行: 会員ランク、列: 年代バンド。値: 平均churn_risk_score</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">9-C コホート別リテンション</div>
+        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 10px;">初回認知月コホート × 経過月数の再購買率</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">9-D RFMセグメント分布</div>
+        <div style="font-size: 0.82rem; color: #475569;">Recency × Frequency バブルチャート</div>
+      </div>
+      <div class="split-panel-right">
+        <img src="../input/db09_retention.png" alt="DB9: リテンション">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>DB10: 商品・ブランドデジタル分析</h3></div>
+  <div class="slide-body">
+    <div class="layout-split-panel">
+      <div class="split-panel-left">
+        <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 12px;">Step 3が季節性情報を読み取り、Step 8がROI評価を書き込む。</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">10-A 商品ページランキング</div>
+        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 10px;">PV数 / カート追加率 / 購入率 / 前週比</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">10-B カテゴリ × 月別 季節性ヒートマップ</div>
+        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 10px;">夏: ビール系×1.8 / 冬: 缶コーヒー×2.0</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">10-C クロスチャネル購買アトリビューション</div>
+        <div style="font-size: 0.82rem; color: #475569;">EC購入 11% / レシートUL 70% / 自販機 5% / ID-POS 15% — <strong>Web投資のROI正当化</strong></div>
+      </div>
+      <div class="split-panel-right">
+        <img src="../input/db10_product_digital.png" alt="DB10: 商品デジタル">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>DB11: セグメント深堀り分析</h3></div>
+  <div class="slide-body">
+    <div class="layout-split-panel">
+      <div class="split-panel-left">
+        <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 12px;">Step 1（データ分析）とStep 2（セグメント選定）が読み取る。</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">11-A セグメント比較レーダーチャート</div>
+        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 10px;">購買頻度/エンゲージメント/LINE反応率/CP参加率/CLV</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">11-B セグメントサイズ推移</div>
+        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 10px;">月別の積み上げ面グラフ</div>
+        <div style="font-weight: 600; color: #1E3A5F; margin-bottom: 4px;">11-C セグメント × チャネル反応率マトリクス</div>
+        <div style="font-size: 0.82rem; color: #475569;">行: セグメント、列: 広告CTR/LINE開封率/CP参加率/EC CVR。各セグメントへの最適チャネル特定に使用</div>
+      </div>
+      <div class="split-panel-right">
+        <img src="../input/db11_segment.png" alt="DB11: セグメント">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>対象セグメント一覧（10種）</h3></div>
+  <div class="slide-body">
+    <table class="data-table" style="font-size: 0.85rem;">
+      <tr><th>ID</th><th>条件概要</th></tr>
+      <tr><td>beer_heavy_tokyo</td><td style="text-align:left;">東京・酒類比率高・25歳超</td></tr>
+      <tr><td>health_tokuho</td><td style="text-align:left;">健康志向 &gt; 0.6</td></tr>
+      <tr><td>young_female_rtd</td><td style="text-align:left;">35歳未満・女性・酒類適格</td></tr>
+      <tr><td>premium_whisky</td><td style="text-align:left;">35歳超・酒類比率高・価格感度低</td></tr>
+      <tr><td>churn_risk_high</td><td style="text-align:left;">エンゲージメント &lt; 30</td></tr>
+      <tr><td>vending_power_user</td><td style="text-align:left;">都市部・エンゲージメント高・自販機アプリ保有</td></tr>
+      <tr><td>line_active</td><td style="text-align:left;">LINE登録 &amp; active</td></tr>
+      <tr><td>cross_sell_target</td><td style="text-align:left;">エンゲージメント高・酒類比率中間</td></tr>
+      <tr><td>new_product_early</td><td style="text-align:left;">エンゲージメント高・40歳未満</td></tr>
+      <tr><td>weekend_party</td><td style="text-align:left;">35歳未満・酒類比率高</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="slide divider-slide">
+  <span class="section-number">APPENDIX</span>
+  <h2>Appendix</h2>
+  <p class="section-sub">工程別 参照CDPテーブル一覧</p>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>工程別 参照CDPテーブル（Step 1-4）</h3></div>
+  <div class="slide-body">
+    <table class="data-table" style="font-size: 0.82rem;">
+      <tr><th>工程</th><th>参照テーブル</th><th>主要カラム</th></tr>
+      <tr><td rowspan="3"><strong>Step 1</strong> データ分析</td><td>computed_attributes</td><td style="text-align:left;">engagement_score, churn_risk_score</td></tr>
+      <tr><td>line_interaction</td><td style="text-align:left;">event_type, message_type, friend_status</td></tr>
+      <tr><td>purchase_transaction</td><td style="text-align:left;">transaction_type, product_id, amount</td></tr>
+      <tr><td rowspan="3"><strong>Step 2</strong> セグメント選定</td><td>segment_membership</td><td style="text-align:left;">segment_id, assignment_method</td></tr>
+      <tr><td>consent_management</td><td style="text-align:left;">consent_type, consent_status</td></tr>
+      <tr><td>customer_profile</td><td style="text-align:left;">is_alcohol_eligible, member_rank</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="slide content-slide">
+  <div class="slide-header"><h3>工程別 参照CDPテーブル（Step 5-8）</h3></div>
+  <div class="slide-body">
+    <table class="data-table" style="font-size: 0.82rem;">
+      <tr><th>工程</th><th>参照テーブル</th><th>主要カラム</th></tr>
+      <tr><td rowspan="2"><strong>Step 5</strong> 配信設定</td><td>computed_attributes</td><td style="text-align:left;">best_contact_day, best_contact_hour</td></tr>
+      <tr><td>line_interaction</td><td style="text-align:left;">line_oa_id</td></tr>
+      <tr><td rowspan="3"><strong>Step 6</strong> 配信実行</td><td>customer_profile</td><td style="text-align:left;">is_alcohol_eligible</td></tr>
+      <tr><td>consent_management</td><td style="text-align:left;">consent_status（最新状態）</td></tr>
+      <tr><td>line_interaction</td><td style="text-align:left;">friend_status</td></tr>
+      <tr><td><strong>Step 7</strong> 効果測定</td><td>line_interaction</td><td style="text-align:left;">delivered → opened → clicked</td></tr>
+      <tr><td rowspan="3"><strong>Step 8</strong> 改善提案</td><td>line_interaction</td><td style="text-align:left;">配信実績全カラム</td></tr>
+      <tr><td>purchase_transaction</td><td style="text-align:left;">購買リフト推定</td></tr>
+      <tr><td>digital_behavior_log</td><td style="text-align:left;">サイト行動変化</td></tr>
+    </table>
+  </div>
+</div>
+  </div>
+
+  <!-- Slide Counter -->
+  <div class="slide-counter" id="slideCounter"></div>
+
+  <!-- Keyboard Hint -->
+  <div class="keyboard-hint" id="keyboardHint">← → キーで操作 / クリックでも移動可能</div>
+
+  <!-- Framework JS -->
+  <script src="framework/presentation.js"></script>
+
+  <!-- Annotation Layer -->
+  <script src="framework/annotation.js?v=1773299157"></script>
+
+  <!-- Custom JS (Chart.js initialization for this presentation) -->
+  <script>
+// TOC back buttons
+document.querySelectorAll('.slide').forEach((s, i) => {
+  const btn = document.createElement('a');
+  btn.className = 'toc-btn';
+  btn.textContent = '\u2630 \u76ee\u6b21';
+  btn.onclick = (e) => { e.stopPropagation(); showSlide(1); };
+  s.style.position = 'relative';
+  s.appendChild(btn);
+});
+  </script>
+</body>
+</html>
